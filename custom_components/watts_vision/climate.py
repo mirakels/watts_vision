@@ -226,14 +226,6 @@ class WattsThermostat(ClimateEntity):
                             if (self.client._smartHomeData[y]["zones"][z]["devices"][x]["id"] == self.id):
                                 self.client._smartHomeData[y]["zones"][z]["devices"][x]["gv_mode"] = self._attr_extra_state_attributes["previous_gv_mode"]
                                 self.client._smartHomeData[y]["zones"][z]["devices"][x]["consigne_manuel"] = value
-                                if (self._attr_extra_state_attributes["previous_gv_mode"] == "0"):
-                                    self._attr_extra_state_attributes["consigne_confort"] = value
-                                elif (self._attr_extra_state_attributes["previous_gv_mode"] == "2"):
-                                    self._attr_extra_state_attributes["consigne_hg"] = value
-                                elif (self._attr_extra_state_attributes["previous_gv_mode"] == "3"):
-                                    self._attr_extra_state_attributes["consigne_eco"] = value
-                                elif (self._attr_extra_state_attributes["previous_gv_mode"] == "4"):
-                                    self._attr_extra_state_attributes["consigne_boost"] = value
 
             func = functools.partial(
                 self.client.pushTemperature,
