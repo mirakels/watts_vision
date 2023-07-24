@@ -10,7 +10,7 @@ from homeassistant.const import TEMP_CELSIUS, TEMP_FAHRENHEIT
 from homeassistant.helpers.typing import HomeAssistantType
 from numpy import NaN
 
-from .const import API_CLIENT, DOMAIN, PRESET_MODE_MAP
+from .const import API_CLIENT, DOMAIN, PRESET_MODE_MAP, CONSIGNE_MAP
 from .watts_api import WattsApi
 from .central_unit import WattsVisionLastCommunicationSensor
 
@@ -183,10 +183,11 @@ class WattsVisionTemperatureSensor(SensorEntity):
     async def async_update(self):
         # try:
         smartHomeDevice = self.client.getDevice(self.smartHome, self.id)
+        value = int(smartHomeDevice["temperature_air"])
         if self.hass.config.units.temperature_unit == TEMP_CELSIUS:
-            self._state = round((int(smartHomeDevice["temperature_air"]) - 320) * 5 / 9 / 10, 1)
+            self._state = round((value - 320) * 5 / 9 / 10, 1)
         else:
-            self._state = int(smartHomeDevice["temperature_air"]) / 10
+            self._state = value / 10
         # except:
         #     self._available = False
         #     _LOGGER.exception("Error retrieving data.")
@@ -244,23 +245,14 @@ class WattsVisionSetTemperatureSensor(SensorEntity):
         # try:
         smartHomeDevice = self.client.getDevice(self.smartHome, self.id)
 
-        if smartHomeDevice["gv_mode"] == "0":
-            self._state = smartHomeDevice["consigne_confort"]
         if smartHomeDevice["gv_mode"] == "1":
             self._state = NaN
-        if smartHomeDevice["gv_mode"] == "2":
-            self._state = smartHomeDevice["consigne_hg"]
-        if smartHomeDevice["gv_mode"] == "3":
-            self._state = smartHomeDevice["consigne_eco"]
-        if smartHomeDevice["gv_mode"] == "4":
-            self._state = smartHomeDevice["consigne_boost"]
-        if smartHomeDevice["gv_mode"] == "11":
-            self._state = smartHomeDevice["consigne_manuel"]
-        if self._state != NaN:
+        else:
+            value = int(smartHomeDevice[CONSIGNE_MAP[smartHomeDevice["gv_mode"]]])
             if self.hass.config.units.temperature_unit == TEMP_CELSIUS:
-                self._state = round((int(self._state) - 320) * 5 / 9 / 10, 1)
+                self._state = round((value - 320) * 5 / 9 / 10, 1)
             else:
-                self._state = int(self._state) / 10
+                self._state = value / 10
 
         # except:
         #     self._available = False

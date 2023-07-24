@@ -32,3 +32,11 @@ PRESET_MODE_REVERSE_MAP = {
 }
 
 SCAN_INTERVAL = timedelta(seconds=120)
+
+CONSIGNE_MAP = {
+    "0" : "consigne_confort",
+    "2" : "consigne_hg",
+    "3" : "consigne_eco",
+    "4" : "consigne_boost",
+    "11" : "consigne_manuel",
+}
