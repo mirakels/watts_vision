@@ -195,13 +195,9 @@ class WattsThermostat(ClimateEntity):
             value = "0"
 
         # reloading the devices may take some time, meanwhile set the new values manually
-        for y in range(len(self.client._smartHomeData)):
-            if self.client._smartHomeData[y]["smarthome_id"] == self.smartHome:
-                for z in range(len(self.client._smartHomeData[y]["zones"])):
-                    for x in range(len(self.client._smartHomeData[y]["zones"][z]["devices"])):
-                        if (self.client._smartHomeData[y]["zones"][z]["devices"][x]["id"] == self.id):
-                            self.client._smartHomeData[y]["zones"][z]["devices"][x]["gv_mode"] = mode
-                            self.client._smartHomeData[y]["zones"][z]["devices"][x]["consigne_manuel"] = value
+        smartHomeDevice = self.client.getDevice(self.smartHome, self.id)
+        smartHomeDevice["consigne_manuel"] = value
+        smartHomeDevice["gv_mode"] = mode
 
         func = functools.partial(
             self.client.pushTemperature,
@@ -222,13 +218,9 @@ class WattsThermostat(ClimateEntity):
             self._attr_extra_state_attributes["previous_gv_mode"] = self._attr_extra_state_attributes["gv_mode"]
 
         # reloading the devices may take some time, meanwhile set the new values manually
-        for y in range(len(self.client._smartHomeData)):
-            if self.client._smartHomeData[y]["smarthome_id"] == self.smartHome:
-                for z in range(len(self.client._smartHomeData[y]["zones"])):
-                    for x in range(len(self.client._smartHomeData[y]["zones"][z]["devices"])):
-                        if (self.client._smartHomeData[y]["zones"][z]["devices"][x]["id"] == self.id):
-                            self.client._smartHomeData[y]["zones"][z]["devices"][x]["gv_mode"] = PRESET_MODE_REVERSE_MAP[preset_mode]
-                            self.client._smartHomeData[y]["zones"][z]["devices"][x]["consigne_manuel"] = value
+        smartHomeDevice = self.client.getDevice(self.smartHome, self.id)
+        smartHomeDevice["consigne_manuel"] = value
+        smartHomeDevice["gv_mode"] = PRESET_MODE_REVERSE_MAP[preset_mode]
 
         func = functools.partial(
             self.client.pushTemperature,
