@@ -276,5 +276,5 @@ class WattsApi:
             return False
         else:
             # raise UnHandledStatuException(response.status_code)
-            _LOGGER.error("Unhandled status code {}".format(response_status_code))
+            _LOGGER.error("Unhandled status code {}".format(response.status_code))
             return False
