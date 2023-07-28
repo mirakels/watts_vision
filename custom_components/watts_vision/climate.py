@@ -260,7 +260,7 @@ class WattsThermostat(ClimateEntity):
 
         # update its temp settings
         smartHomeDevice["consigne_manuel"] = value
-        smartHomeDevice["consigne_confort"] = value
+        smartHomeDevice[CONSIGNE_MAP[gvMode]] = value
 
         # Set the smartHomeDevice using the just altered SmartHomeDevice
         self.client.setDevice(self.smartHome, self.id, smartHomeDevice)
