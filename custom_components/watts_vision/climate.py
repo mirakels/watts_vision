@@ -185,14 +185,20 @@ class WattsThermostat(ClimateEntity):
         consigne = CONSIGNE_MAP[mode]
         if hvac_mode == HVAC_MODE_HEAT or hvac_mode == HVAC_MODE_COOL:
             if mode == "1":
-                value = "0"
+                value = 0
             else:
-                value = str(int(self._attr_extra_state_attributes[consigne] * 10))
+                value = int(self._attr_extra_state_attributes[consigne])
 
         if hvac_mode == HVAC_MODE_OFF:
             self._attr_extra_state_attributes["previous_gv_mode"] = self._attr_extra_state_attributes["gv_mode"]
             mode = PRESET_MODE_REVERSE_MAP[PRESET_OFF]
-            value = "0"
+            value = 0
+
+        if value > self._attr_max_temp:
+            value = self._attr_max_temp
+        if value < self._attr_min_temp:
+            value = self._attr_min_temp
+        value = str(value*10)
 
         # reloading the devices may take some time, meanwhile set the new values manually
         smartHomeDevice = self.client.getDevice(self.smartHome, self.id)
@@ -212,10 +218,16 @@ class WattsThermostat(ClimateEntity):
         """Set new target preset mode."""
         consigne = CONSIGNE_MAP[PRESET_MODE_REVERSE_MAP[preset_mode]]
         if preset_mode != PRESET_OFF:
-            value = str(int(self._attr_extra_state_attributes[consigne] * 10))
+            value = int(self._attr_extra_state_attributes[consigne])
         else:
-            value = "0"
+            value = 0
             self._attr_extra_state_attributes["previous_gv_mode"] = self._attr_extra_state_attributes["gv_mode"]
+
+        if value > self._attr_max_temp:
+            value = self._attr_max_temp
+        if value < self._attr_min_temp:
+            value = self._attr_min_temp
+        value = str(value*10)
 
         # reloading the devices may take some time, meanwhile set the new values manually
         smartHomeDevice = self.client.getDevice(self.smartHome, self.id)
@@ -234,8 +246,14 @@ class WattsThermostat(ClimateEntity):
     async def async_set_temperature(self, **kwargs):
         """Set new target temperature."""
 
-        value = str(int(kwargs["temperature"] * 10))
+        value = int(kwargs["temperature"])
         gvMode = PRESET_MODE_REVERSE_MAP[self._attr_preset_mode]
+
+        if value > self._attr_max_temp:
+            value = self._attr_max_temp
+        if value < self._attr_min_temp:
+            value = self._attr_min_temp
+        value = str(value*10)
 
         # Get the smartHomeDevice
         smartHomeDevice = self.client.getDevice(self.smartHome, self.id)
