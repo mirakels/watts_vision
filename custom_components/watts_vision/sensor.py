@@ -118,7 +118,8 @@ class WattsVisionThermostatSensor(SensorEntity):
             "manufacturer": "Watts",
             "name": "Thermostat " + self.zone,
             "model": "BT-D03-RF",
-            "via_device": (DOMAIN, self.smartHome)
+            "via_device": (DOMAIN, self.smartHome),
+            "suggested_area": self.zone
         }
 
     async def async_update(self):
