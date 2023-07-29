@@ -6,7 +6,7 @@ from homeassistant.components.sensor import SensorEntity
 
 
 class WattsVisionLastCommunicationSensor(SensorEntity):
-    def __init__(self, wattsClient: WattsApi, smartHome: str, label: str):
+    def __init__(self, wattsClient: WattsApi, smartHome: str, label: str, mac_address: str):
         super().__init__()
         self.client = wattsClient
         self.smartHome = smartHome
@@ -14,6 +14,7 @@ class WattsVisionLastCommunicationSensor(SensorEntity):
         self._name = "Last communication " + self._label
         self._state = None
         self._available = True
+        self._mac_address = mac_address
 
     @property
     def unique_id(self) -> str:
@@ -38,7 +39,10 @@ class WattsVisionLastCommunicationSensor(SensorEntity):
             },
             "manufacturer": "Watts",
             "name": "Central Unit " + self._label,
-            "model": "BT-CT02-RF"
+            "model": "BT-CT02-RF",
+            "connections": {
+                ("mac", self._mac_address)
+            }
         }
 
     async def async_update(self):
