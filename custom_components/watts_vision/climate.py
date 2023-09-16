@@ -182,11 +182,11 @@ class WattsThermostat(ClimateEntity):
     async def async_set_hvac_mode(self, hvac_mode):
         """Set new target hvac mode."""
         mode = self._attr_extra_state_attributes["previous_gv_mode"]
-        consigne = CONSIGNE_MAP[mode]
         if hvac_mode == HVAC_MODE_HEAT or hvac_mode == HVAC_MODE_COOL:
             if mode == "1":
                 value = 0
             else:
+                consigne = CONSIGNE_MAP[mode]
                 value = int(self._attr_extra_state_attributes[consigne])
 
         if hvac_mode == HVAC_MODE_OFF:
