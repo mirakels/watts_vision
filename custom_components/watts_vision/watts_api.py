@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 import logging
+import time
 
 from homeassistant.helpers.typing import HomeAssistantType
 import requests
@@ -18,6 +19,7 @@ class WattsApi:
         self._token = None
         self._token_expires = None
         self._refresh_token = None
+        self._refreshing_token = False
         self._refresh_expires_in = None
         self._smartHomeData = {}
 
@@ -64,15 +66,18 @@ class WattsApi:
             self._token_expires = now + timedelta(seconds=request_token_result.json()["expires_in"])
             self._refresh_token = request_token_result.json()["refresh_token"]
             self._refresh_expires_in = now + timedelta(seconds=request_token_result.json()["refresh_expires_in"])
-            _LOGGER.debug("Received access token. New refresh_token needed on {}".format(self._refresh_expires_in))
+            _LOGGER.debug("Received access token till {}. refresh_token till {}".format(self._token_expires, self._refresh_expires_in))
             return token
         else:
             _LOGGER.error(
-                "Something went wrong fetching the token: {}".format(
-                    request_token_result.status_code
+                "Something went wrong fetching the token for type {}: {} {}".format(
+                    payload["grant_type"], request_token_result.status_code, request_token_result.json()
                 )
             )
-            raise None
+            if payload["grant_type"] == "refresh_token":
+                _LOGGER.error("Retrying with relogin");
+                return self.getLoginToken(True)
+            return None
 
     def loadData(self):
         """load data from api"""
@@ -111,6 +116,7 @@ class WattsApi:
             headers=headers,
             data=payload,
         )
+        _LOGGER.debug("Load devices.")
 
         if self.check_response(devices_result):
             return devices_result.json()["data"]["zones"]
@@ -121,18 +127,27 @@ class WattsApi:
         """Check if token is expired and request a new one."""
         now = datetime.now()
 
+        timeout = 10
+        while self._refreshing_token and timeout != 0:
+            _LOGGER.debug("Refresh in action.")
+            time.sleep(1/10)
+            --timeout
+
         if (self._token_expires and self._token_expires <= now
             or
             self._refresh_expires_in and self._refresh_expires_in <= now
         ):
+            self._refreshing_token = True
             self.getLoginToken()
+            self._refreshing_token = False
 
     def reloadDevices(self):
         """load devices for each smart home"""
         if self._smartHomeData is not None:
             for y in range(len(self._smartHomeData)):
                 zones = self.loadDevices(self._smartHomeData[y]["smarthome_id"])
-                self._smartHomeData[y]["zones"] = zones
+                if zones != None:
+                    self._smartHomeData[y]["zones"] = zones
 
         return True
 
@@ -160,6 +175,7 @@ class WattsApi:
                         if self._smartHomeData[y]["zones"][z]["devices"][x]["id"] == deviceId:
                             # If device is found, overwrite it with the new state
                             self._smartHomeData[y]["zones"][z]["devices"][x] = newState
+                            _LOGGER.debug("setDevice {} {}".format(deviceId, newState))
                             return self._smartHomeData[y]["zones"][z]["devices"][x]
 
         return None
@@ -218,6 +234,7 @@ class WattsApi:
                 "query[consigne_manuel]": value,
             }
         payload.update(extrapayload)
+        _LOGGER.debug("pushTemp {}. mode {} smarthome {} device {}".format(value, gvMode, smarthome, deviceID))
 
         push_result = requests.post(
             url="https://smarthome.wattselectronics.com/api/v0.1/human/query/push/",
@@ -227,6 +244,7 @@ class WattsApi:
 
         if self.check_response(push_result):
             return True
+        _LOGGER.debug("pushTemp failed")
         return False
 
     def getLastCommunication(self, smarthome: str, firstTry: bool = True):
@@ -270,11 +288,16 @@ class WattsApi:
                     )
                 )
                 return False
+        else:
+            # raise UnHandledStatuException(response.status_code)
+            _LOGGER.error(
+                "Unexpected status code {} {}".format(
+                    response.status_code, response.json()
+                )
+            )
+
         if response.status_code == 401:
             # raise UnauthorizedException("Unauthorized")
             _LOGGER.error("Unauthorized")
-            return False
-        else:
-            # raise UnHandledStatuException(response.status_code)
-            _LOGGER.error("Unhandled status code {}".format(response.status_code))
-            return False
+
+        return False
