@@ -1,12 +1,11 @@
 """Watts Vision sensor platform."""
 from datetime import timedelta
 import logging
-import math
 from typing import Callable, Optional
 
 from homeassistant.components.sensor import SensorDeviceClass, SensorEntity
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import TEMP_CELSIUS, TEMP_FAHRENHEIT
+from homeassistant.const import TEMP_CELSIUS, TEMP_FAHRENHEIT, PERCENTAGE
 from homeassistant.helpers.typing import HomeAssistantType
 from numpy import NaN
 
@@ -56,6 +55,14 @@ async def async_setup_entry(
                             )
                             sensors.append(
                                 WattsVisionSetTemperatureSensor(
+                                    wattsClient,
+                                    smartHomes[y]["smarthome_id"],
+                                    smartHomes[y]["zones"][z]["devices"][x]["id"],
+                                    smartHomes[y]["zones"][z]["zone_label"]
+                                )
+                            )
+                            sensors.append(
+                                WattsVisionBatterySensor(
                                     wattsClient,
                                     smartHomes[y]["smarthome_id"],
                                     smartHomes[y]["zones"][z]["devices"][x]["id"],
@@ -133,6 +140,57 @@ class WattsVisionThermostatSensor(SensorEntity):
         #     self._available = False
         #     _LOGGER.exception("Error retrieving data.")
 
+
+class WattsVisionBatterySensor(SensorEntity):
+    """Representation of the state of a Watts Vision device."""
+    def __init__(self, wattsClient: WattsApi, smartHome: str, id: str, zone: str):
+        super().__init__()
+        self.client = wattsClient
+        self.smartHome = smartHome
+        self.id = id
+        self.zone = zone
+        self._name = "Battery " + zone
+        self._state = None
+        self._available = None
+
+    @property
+    def unique_id(self) -> str:
+        """Return the unique ID of the sensor."""
+        return "battery_" + self.id
+
+    @property
+    def name(self) -> str:
+        """Return the name of the entity."""
+        return self._name
+
+    @property
+    def device_class(self):
+        return SensorDeviceClass.BATTERY
+
+    @property
+    def native_unit_of_measurement(self):
+        return PERCENTAGE
+
+    @property
+    def state(self) -> int:
+        if self.client.getDevice(self.smartHome, self.id)['error_code'] == 1:
+            _LOGGER.warning('Battery is malfunctioning or (almost) empty for device %s ', self.id)
+            return 0
+        else:
+            return 100
+
+    @property
+    def device_info(self):
+        return {
+            "identifiers": {
+                # Serial numbers are unique identifiers within a specific domain
+                (DOMAIN, self.id)
+            },
+            "manufacturer": "Watts",
+            "name": "Thermostat " + self.zone,
+            "model": "BT-D03-RF",
+            "via_device": (DOMAIN, self.smartHome)
+        }
 
 class WattsVisionTemperatureSensor(SensorEntity):
     """Representation of a Watts Vision temperature sensor."""
