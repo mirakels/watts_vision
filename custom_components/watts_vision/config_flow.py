@@ -27,7 +27,7 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any], current: dic
     # Check if the username already exists as an entry
     existing_entries = hass.config_entries.async_entries(DOMAIN)
     for entry in existing_entries:
-        if entry.data.get(CONF_USERNAME) == data[CONF_USERNAME] and (current == None or entry.data.get(CONF_USERNAME) != current.get("username")):
+        if entry.data.get(CONF_USERNAME) == data[CONF_USERNAME] and (current is None or entry.data.get(CONF_USERNAME) != current.get("username")):
             raise UsernameExists
 
     api = WattsApi(hass, data[CONF_USERNAME], data[CONF_PASSWORD])
@@ -83,8 +83,10 @@ class ConfigFlow(ConfigFlow, domain=DOMAIN):
 class InvalidAuth(HomeAssistantError):
     """Error to indicate there is invalid auth."""
 
+
 class UsernameExists(HomeAssistantError):
     """Error to indicate the username already exists."""
+
 
 class OptionsFlowHandler(config_entries.OptionsFlow):
     """Handle options flow for the Watts Vision integration."""
