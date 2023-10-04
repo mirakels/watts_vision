@@ -29,7 +29,7 @@ class WattsApi:
             token = self.getLoginToken(True)
             return token is not None
         except Exception as exception:
-            _LOGGER.exception("Authentication exception {exception}")
+            _LOGGER.exception(f"Authentication exception {exception}")
             return False
 
     def getLoginToken(self, forcelogin = False):
@@ -66,13 +66,15 @@ class WattsApi:
             self._token_expires = now + timedelta(seconds=request_token_result.json()["expires_in"])
             self._refresh_token = request_token_result.json()["refresh_token"]
             self._refresh_expires_in = now + timedelta(seconds=request_token_result.json()["refresh_expires_in"])
-            _LOGGER.debug("Received access token till {}. refresh_token till {}".format(self._token_expires, self._refresh_expires_in))
+            _LOGGER.debug(f"Received access token till {self._token_expires}, refresh_token till {self._refresh_expires_in}")
             return token
         else:
             _LOGGER.error(
-                "Something went wrong fetching the token for type {}: {} {}".format(
-                    payload["grant_type"], request_token_result.status_code, request_token_result.json()
-                )
+                "Something went wrong fetching the token for type " + payload["grant_type"] +
+		f": {request_token_result.status_code} {request_token_result.json()}"
+#                "Something went wrong fetching the token for type {}: {} {}".format(
+#                    payload["grant_type"], request_token_result.status_code, request_token_result.json()
+#                )
             )
             if payload["grant_type"] == "refresh_token":
                 _LOGGER.error("Retrying with relogin");
@@ -175,7 +177,7 @@ class WattsApi:
                         if self._smartHomeData[y]["zones"][z]["devices"][x]["id"] == deviceId:
                             # If device is found, overwrite it with the new state
                             self._smartHomeData[y]["zones"][z]["devices"][x] = newState
-                            _LOGGER.debug("setDevice {} {}".format(deviceId, newState))
+                            _LOGGER.debug(f"setDevice {deviceId} {newState}")
                             return self._smartHomeData[y]["zones"][z]["devices"][x]
 
         return None
@@ -234,7 +236,7 @@ class WattsApi:
                 "query[consigne_manuel]": value,
             }
         payload.update(extrapayload)
-        _LOGGER.debug("pushTemp {}. mode {} smarthome {} device {}".format(value, gvMode, smarthome, deviceID))
+        _LOGGER.debug(f"pushTemp {value}. mode {gvMode} smarthome {smarthome} device {deviceID}")
 
         push_result = requests.post(
             url="https://smarthome.wattselectronics.com/api/v0.1/human/query/push/",
@@ -290,11 +292,7 @@ class WattsApi:
                 return False
         else:
             # raise UnHandledStatuException(response.status_code)
-            _LOGGER.error(
-                "Unexpected status code {} {}".format(
-                    response.status_code, response.json()
-                )
-            )
+            _LOGGER.error(f"Unexpected status code {response.status_code} {response.json()}")
 
         if response.status_code == 401:
             # raise UnauthorizedException("Unauthorized")
