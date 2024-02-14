@@ -245,7 +245,7 @@ class WattsVisionTemperatureSensor(SensorEntity):
         smartHomeDevice = self.client.getDevice(self.smartHome, self.id)
         value = int(smartHomeDevice["temperature_air"])
         if self.hass.config.units.temperature_unit == TEMP_CELSIUS:
-            self._state = round((value - 320) * 5 / 9 / 10, 1)
+            self._state = int((value - 320) * 5 / 9) / 10
         else:
             self._state = value / 10
         # except:
@@ -310,7 +310,7 @@ class WattsVisionSetTemperatureSensor(SensorEntity):
         else:
             value = int(smartHomeDevice[CONSIGNE_MAP[smartHomeDevice["gv_mode"]]])
             if self.hass.config.units.temperature_unit == TEMP_CELSIUS:
-                self._state = round((value - 320) * 5 / 9 / 10, 1)
+                self._state = int((value - 320) * 5 / 9) / 10
             else:
                 self._state = value / 10
 
