@@ -71,7 +71,7 @@ class WattsApi:
         else:
             _LOGGER.error(
                 "Something went wrong fetching the token for type " + payload["grant_type"] +
-		f": {request_token_result.status_code} {request_token_result.json()}"
+		f": {request_token_result.status_code} {request_token_result.text}"
 #                "Something went wrong fetching the token for type {}: {} {}".format(
 #                    payload["grant_type"], request_token_result.status_code, request_token_result.json()
 #                )

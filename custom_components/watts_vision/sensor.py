@@ -174,7 +174,7 @@ class WattsVisionBatterySensor(SensorEntity):
     @property
     def state(self) -> int:
         if self.client.getDevice(self.smartHome, self.id)['error_code'] == 1:
-            _LOGGER.warning('Battery is malfunctioning or (almost) empty for device %s ', self.id)
+            _LOGGER.warning('Battery is malfunctioning or (almost) empty for device %s ', self.name)
             return 0
         else:
             return 100
