@@ -198,6 +198,7 @@ class WattsThermostat(ClimateEntity):
                 value = int(self._attr_extra_state_attributes[consigne])
 
         if hvac_mode == HVAC_MODE_OFF:
+            consigne = "Off"
             self._attr_extra_state_attributes["previous_gv_mode"] = self._attr_extra_state_attributes["gv_mode"]
             mode = PRESET_MODE_REVERSE_MAP[PRESET_OFF]
             value = 0
