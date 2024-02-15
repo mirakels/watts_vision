@@ -8,10 +8,7 @@ from homeassistant.components.climate.const import (
     CURRENT_HVAC_HEAT,
     CURRENT_HVAC_IDLE,
     CURRENT_HVAC_OFF,
-    HVAC_MODE_AUTO,
-    HVAC_MODE_COOL,
-    HVAC_MODE_HEAT,
-    HVAC_MODE_OFF,
+    HVACMode,
     SUPPORT_PRESET_MODE,
     SUPPORT_TARGET_TEMPERATURE,
 )
@@ -103,7 +100,7 @@ class WattsThermostat(ClimateEntity):
 
     @property
     def hvac_modes(self) -> list[str]:
-        return [HVAC_MODE_HEAT] + [HVAC_MODE_COOL] + [HVAC_MODE_OFF]
+        return [HVACMode.HEAT] + [HVACMode.COOL] + [HVACMode.OFF]
 
     @property
     def hvac_mode(self) -> str:
@@ -161,14 +158,14 @@ class WattsThermostat(ClimateEntity):
         self._attr_preset_mode = PRESET_MODE_MAP[smartHomeDevice["gv_mode"]]
 
         if smartHomeDevice["gv_mode"] == "1":
-            self._attr_hvac_mode = HVAC_MODE_OFF
+            self._attr_hvac_mode = HVACMode.OFF
             self._attr_target_temperature = None
             targettemp = 0
         else:
             if smartHomeDevice["heat_cool"] == "1":
-                self._attr_hvac_mode = HVAC_MODE_COOL
+                self._attr_hvac_mode = HVACMode.COOL
             else:
-                self._attr_hvac_mode = HVAC_MODE_HEAT
+                self._attr_hvac_mode = HVACMode.HEAT
             consigne = CONSIGNE_MAP[smartHomeDevice["gv_mode"]]
             self._attr_target_temperature = float(smartHomeDevice[consigne]) / 10
             targettemp = self._attr_target_temperature
@@ -189,7 +186,7 @@ class WattsThermostat(ClimateEntity):
     async def async_set_hvac_mode(self, hvac_mode):
         """Set new target hvac mode."""
         mode = self._attr_extra_state_attributes["previous_gv_mode"]
-        if hvac_mode == HVAC_MODE_HEAT or hvac_mode == HVAC_MODE_COOL:
+        if hvac_mode == HVACMode.HEAT or hvac_mode == HVACMode.COOL:
             if mode == "1":
                 consigne = "Off"
                 value = 0
@@ -197,7 +194,7 @@ class WattsThermostat(ClimateEntity):
                 consigne = CONSIGNE_MAP[mode]
                 value = int(self._attr_extra_state_attributes[consigne])
 
-        if hvac_mode == HVAC_MODE_OFF:
+        if hvac_mode == HVACMode.OFF:
             consigne = "Off"
             self._attr_extra_state_attributes["previous_gv_mode"] = self._attr_extra_state_attributes["gv_mode"]
             mode = PRESET_MODE_REVERSE_MAP[PRESET_OFF]
