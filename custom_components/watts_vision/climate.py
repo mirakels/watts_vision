@@ -4,10 +4,9 @@ from typing import Callable
 
 from homeassistant.components.climate import ClimateEntity
 from homeassistant.components.climate.const import (
+    ClimateEntityFeature,
     HVACAction,
     HVACMode,
-    SUPPORT_PRESET_MODE,
-    SUPPORT_TARGET_TEMPERATURE,
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import UnitOfTemperature
@@ -89,7 +88,7 @@ class WattsThermostat(ClimateEntity):
 
     @property
     def supported_features(self):
-        return SUPPORT_TARGET_TEMPERATURE | SUPPORT_PRESET_MODE
+        return ClimateEntityFeature.TARGET_TEMPERATURE | ClimateEntityFeature.PRESET_MODE
 
     @property
     def temperature_unit(self) -> str:
