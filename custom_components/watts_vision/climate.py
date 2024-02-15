@@ -16,7 +16,7 @@ from homeassistant.components.climate.const import (
     SUPPORT_TARGET_TEMPERATURE,
 )
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import TEMP_FAHRENHEIT
+from homeassistant.const import UnitOfTemperature
 from homeassistant.helpers.typing import HomeAssistantType
 
 from .const import (
@@ -99,7 +99,7 @@ class WattsThermostat(ClimateEntity):
 
     @property
     def temperature_unit(self) -> str:
-        return TEMP_FAHRENHEIT
+        return UnitOfTemperature.FAHRENHEIT
 
     @property
     def hvac_modes(self) -> list[str]:
