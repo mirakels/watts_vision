@@ -4,10 +4,7 @@ from typing import Callable
 
 from homeassistant.components.climate import ClimateEntity
 from homeassistant.components.climate.const import (
-    CURRENT_HVAC_COOL,
-    CURRENT_HVAC_HEAT,
-    CURRENT_HVAC_IDLE,
-    CURRENT_HVAC_OFF,
+    HVACAction,
     HVACMode,
     SUPPORT_PRESET_MODE,
     SUPPORT_TARGET_TEMPERATURE,
@@ -146,14 +143,14 @@ class WattsThermostat(ClimateEntity):
 
         if smartHomeDevice["heating_up"] == "0":
             if smartHomeDevice["gv_mode"] == "1":
-                self._attr_hvac_action = CURRENT_HVAC_OFF
+                self._attr_hvac_action = HVACAction.OFF
             else:
-                self._attr_hvac_action = CURRENT_HVAC_IDLE
+                self._attr_hvac_action = HVACAction.IDLE
         else:
             if smartHomeDevice["heat_cool"] == "1":
-                self._attr_hvac_action = CURRENT_HVAC_COOL
+                self._attr_hvac_action = HVACAction.COOLING
             else:
-                self._attr_hvac_action = CURRENT_HVAC_HEAT
+                self._attr_hvac_action = HVACAction.HEATING
 
         self._attr_preset_mode = PRESET_MODE_MAP[smartHomeDevice["gv_mode"]]
 
