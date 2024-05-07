@@ -15,8 +15,6 @@ from .central_unit import WattsVisionLastCommunicationSensor
 
 _LOGGER = logging.getLogger(__name__)
 
-SCAN_INTERVAL = timedelta(seconds=120)
-
 
 async def async_setup_entry(
     hass: HomeAssistantType,

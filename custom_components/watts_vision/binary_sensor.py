@@ -11,8 +11,6 @@ from .watts_api import WattsApi
 
 _LOGGER = logging.getLogger(__name__)
 
-SCAN_INTERVAL = timedelta(seconds=120)
-
 
 async def async_setup_entry(
     hass: HomeAssistantType,
