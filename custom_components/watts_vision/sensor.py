@@ -11,7 +11,7 @@ from numpy import NaN
 
 from .const import API_CLIENT, DOMAIN, PRESET_MODE_MAP, CONSIGNE_MAP
 from .watts_api import WattsApi
-from .central_unit import WattsVisionLastCommunicationSensor
+from .central_unit import WattsVisionLastCommunicationSensor, WattsVisionGlobalStatus, WattsVisionGlobalDemand
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -69,6 +69,22 @@ async def async_setup_entry(
                             )
             sensors.append(
                 WattsVisionLastCommunicationSensor(
+                    wattsClient,
+                    smartHomes[y]["smarthome_id"],
+                    smartHomes[y]["label"],
+                    smartHomes[y]["mac_address"]
+                )
+            )
+            sensors.append(
+                WattsVisionGlobalStatus(
+                    wattsClient,
+                    smartHomes[y]["smarthome_id"],
+                    smartHomes[y]["label"],
+                    smartHomes[y]["mac_address"]
+                )
+            )
+            sensors.append(
+                WattsVisionGlobalDemand(
                     wattsClient,
                     smartHomes[y]["smarthome_id"],
                     smartHomes[y]["label"],

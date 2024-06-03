@@ -157,6 +157,14 @@ class WattsApi:
         """Get smarthomes"""
         return self._smartHomeData
 
+    def getSmartHome(self, smarthome: str):
+        """Get specific device"""
+        for y in range(len(self._smartHomeData)):
+            if self._smartHomeData[y]["smarthome_id"] == smarthome:
+                return self._smartHomeData[y]
+
+        return None
+
     def getDevice(self, smarthome: str, deviceId: str):
         """Get specific device"""
         for y in range(len(self._smartHomeData)):
