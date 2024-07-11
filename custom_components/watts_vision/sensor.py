@@ -188,7 +188,7 @@ class WattsVisionBatterySensor(SensorEntity):
     @property
     def state(self) -> int:
         rc = 100
-        err = self.client.getDevice(self.smartHome, self.id)['error_code']:
+        err = self.client.getDevice(self.smartHome, self.id)['error_code']
         if err & 0x0001:
             _LOGGER.warning('Battery needs attention for device %s ', self.name)
             rc = 5
