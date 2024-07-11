@@ -154,4 +154,5 @@ class WattsVisionGlobalDemand(SensorEntity):
             for x in range(len(smartHome["zones"][z]["devices"])):
                 smartHomeDevice = smartHome["zones"][z]["devices"][x]
                 if smartHomeDevice["heating_up"] != "0":
-                    ++self._state
+                    self._state = self._state + 1
+        _LOGGER.debug("Demanding rooms: {}".format(self._state))

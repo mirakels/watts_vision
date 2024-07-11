@@ -158,7 +158,7 @@ class WattsApi:
         return self._smartHomeData
 
     def getSmartHome(self, smarthome: str):
-        """Get specific device"""
+        """Get specific smarthome"""
         for y in range(len(self._smartHomeData)):
             if self._smartHomeData[y]["smarthome_id"] == smarthome:
                 return self._smartHomeData[y]
@@ -273,6 +273,7 @@ class WattsApi:
             data=payload,
         )
 
+        _LOGGER.debug("Got Last Comm date.")
         if self.check_response(last_connection_result):
             return last_connection_result.json()["data"]
 
