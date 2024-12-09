@@ -7,7 +7,7 @@ from homeassistant.components.sensor import SensorDeviceClass, SensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import UnitOfTemperature, PERCENTAGE
 from homeassistant.core import HomeAssistant
-from numpy import NaN
+from numpy import nan
 
 from .const import API_CLIENT, DOMAIN, PRESET_MODE_MAP, CONSIGNE_MAP
 from .watts_api import WattsApi
@@ -327,7 +327,7 @@ class WattsVisionSetTemperatureSensor(SensorEntity):
         smartHomeDevice = self.client.getDevice(self.smartHome, self.id)
 
         if smartHomeDevice["gv_mode"] == "1":
-            self._state = NaN
+            self._state = nan
         else:
             value = int(smartHomeDevice[CONSIGNE_MAP[smartHomeDevice["gv_mode"]]])
             if self.hass.config.units.temperature_unit == UnitOfTemperature.CELSIUS:
