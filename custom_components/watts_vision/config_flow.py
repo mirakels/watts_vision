@@ -91,10 +91,6 @@ class UsernameExists(HomeAssistantError):
 class OptionsFlowHandler(config_entries.OptionsFlow):
     """Handle options flow for the Watts Vision integration."""
 
-    def __init__(self, config_entry):
-        """Initialize the options flow."""
-        self.config_entry = config_entry
-
     async def async_step_init(self, user_input=None):
         errors = {}
         updated = None
