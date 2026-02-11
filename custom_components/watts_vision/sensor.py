@@ -1,7 +1,8 @@
 """Watts Vision sensor platform."""
 from datetime import timedelta
 import logging
-from typing import Callable, Optional
+from typing import Optional
+from collections.abc import Callable
 
 from homeassistant.components.sensor import SensorDeviceClass, SensorEntity
 from homeassistant.config_entries import ConfigEntry
@@ -119,7 +120,7 @@ class WattsVisionThermostatSensor(SensorEntity):
         return self._name
 
     @property
-    def state(self) -> Optional[str]:
+    def state(self) -> Optional[str] = None:
         return self._state
 
     @property
@@ -237,7 +238,7 @@ class WattsVisionTemperatureSensor(SensorEntity):
         return self._name
 
     @property
-    def state(self) -> Optional[str]:
+    def state(self) -> Optional[str] = None:
         return self._state
 
     @property
@@ -298,7 +299,7 @@ class WattsVisionSetTemperatureSensor(SensorEntity):
         return self._name
 
     @property
-    def state(self) -> Optional[str]:
+    def state(self) -> Optional[str] = None:
         return self._state
 
     @property

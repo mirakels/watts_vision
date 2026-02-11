@@ -27,7 +27,7 @@ class WattsVisionLastCommunicationSensor(SensorEntity):
         return self._name
 
     @property
-    def state(self) -> Optional[str]:
+    def state(self) -> Optional[str] = None:
         return self._state
 
     @property
@@ -77,7 +77,7 @@ class WattsVisionGlobalStatus(SensorEntity):
         return self._name
 
     @property
-    def state(self) -> Optional[str]:
+    def state(self) -> Optional[str] = None:
         return self._state
 
     @property

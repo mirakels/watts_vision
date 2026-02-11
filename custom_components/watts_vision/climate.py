@@ -1,6 +1,6 @@
 import functools
 import logging
-from typing import Callable
+from collections.abc import Callable
 
 from homeassistant.components.climate import ClimateEntity
 from homeassistant.components.climate.const import (

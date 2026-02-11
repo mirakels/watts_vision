@@ -1,6 +1,6 @@
 from datetime import timedelta
 import logging
-from typing import Callable
+from collections.abc import Callable
 
 from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.config_entries import ConfigEntry

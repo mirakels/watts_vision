@@ -1,4 +1,4 @@
-from datetime import timedelta
+
 from homeassistant.components.climate.const import (
     PRESET_BOOST,
     PRESET_COMFORT,
@@ -30,8 +30,6 @@ PRESET_MODE_REVERSE_MAP = {
     PRESET_BOOST: "4",
     PRESET_PROGRAM: "11",
 }
-
-SCAN_INTERVAL = timedelta(seconds=120)
 
 CONSIGNE_MAP = {
     "0" : "consigne_confort",
