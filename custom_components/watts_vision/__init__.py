@@ -33,9 +33,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     hass.data[DOMAIN][API_CLIENT] = client
 
-    hass.async_create_task(
-        hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
-    )
+    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
     async def refresh_devices(event_time):
         await hass.async_add_executor_job(client.reloadDevices)
@@ -46,7 +44,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         interval = 120
     else:
         interval = entry.data.get(CONF_SCAN_INTERVAL)
-
     SCAN_INTERVAL = timedelta(seconds=interval)
 
     _LOGGER.debug("Setting up refresh interval to %s", SCAN_INTERVAL)
